@@ -1,3 +1,4 @@
 {
-    "neo4jVersion": "2.1.2"
+    "neo4jVersion": "2.1.2",
+    "dbLocation":"data/graph.db"
 }

@@ -14,7 +14,7 @@ var cwd = process.cwd();
 var neo4jiDir = cwd + '/neo4ji/';
 var instancesDir = neo4jiDir + 'instances/';
 var templatesDir = __dirname + '/templates/';
-configFilePath = __dirname + '/config.json'
+configFilePath = __dirname + '/config.json';
 
 var instanceFilePath = neo4jiDir + 'instances.json';
 
@@ -97,7 +97,7 @@ function saveInstances(){
     var instancesFile = {
         currentPort:currentPort,
         instances:instances
-    }
+    };
 
     //console.log('new instances: ' + JSON.stringify(instancesFile, null, 4));
 
@@ -118,12 +118,15 @@ function exec(string){
 
 }
 
-function createInstance(name, version){
+function createInstance(name, version, dbLocation){
 
     var port = nextPort();
 
     if(!version){
         version  = config.neo4jVersion;
+    }
+    if(!dbLocation){
+        dbLocation  = config.dbLocation;
     }
 
 
@@ -148,6 +151,7 @@ function createInstance(name, version){
     var props = fs.readFileSync(__dirname + '/propertiesTemplate.properties', 'utf8');
     props = props.replace('{HTTP_PORT}', '' + port);
     props = props.replace('{HTTPS_PORT}', '' + port+1);
+    props = props.replace('{DB_LOCATION}', dbLocation);
 
     var propertiesPath = instancesDir + name + '/conf/neo4j-server.properties';
 
@@ -207,14 +211,14 @@ exports.config = configure;
 
 exports.instances = function(){
     return instances;
-}
+};
 
 exports.instance = function(name, version){
     startInstance(name, version);
     return new neo4j.GraphDatabase('http://localhost:' + instances[name].port);
-}
+};
 
 exports.clearInstance = function(name, callback){
     var instance = exports.instance(name);
     instance.query('MATCH (n) OPTIONAL MATCH (n)-[r]-() DELETE n,r', {}, callback);
-}
+};
